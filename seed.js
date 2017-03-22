@@ -7,6 +7,7 @@ const Place = require('./models/place');
 const Hotel = require('./models/hotel');
 const Restaurant = require('./models/restaurant');
 const Activity = require('./models/activity');
+const Day = require('./models/day');
 
 const data = {
   hotel: [
@@ -59,8 +60,9 @@ const data = {
     {name: "Washington Square Park", place: {address: "1 Washington Sq E", city: "New York", state: "NY", phone: "123-456-7890", location: [40.732204, -73.998649]}, age_range: "All" },
     {name: "Union Square Holiday Market", place: {address: "Union Sq & W 14th St", city: "New York", state: "NY", phone: "123-456-7890", location: [40.733615, -73.987995]}, age_range: "All" },
     {name: "Strand Bookstore", place: {address: "828 Broadway", city: "New York", state: "NY", phone: "123-456-7890", location: [40.733274, -73.990870]}, age_range: "All" }
-  ]
+  ],
 };
+
 
 db.sync({force: true})
 .then(function () {
@@ -74,7 +76,8 @@ db.sync({force: true})
   const creatingActivities = data.activity.map(function (activity) {
     return Activity.create(activity, { include: [Place] });
   });
-  return Promise.all([creatingHotels, creatingRestaurants, creatingActivities]);
+  const createDay = Day.create({number: 1});
+  return Promise.all([creatingHotels, creatingRestaurants, creatingActivities, createDay]);
 })
 .then(function () {
   console.log("Finished inserting data (press ctrl-c to exit)");

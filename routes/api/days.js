@@ -7,6 +7,7 @@ var Hotel = db.model('hotel');
 var Restaurant = db.model('restaurant');
 var Activity = db.model('activity');
 var Place = db.model('place');
+var Day = db.model('day');
 
 // Example:
 //
@@ -41,9 +42,11 @@ router.get('/', (req, res, next) =>
 //   $.post('//echo', {hello: 'world'}).then(doSomethingWithIt)
 router.post('/echo', (req, res) => res.json(req.body))
 
-router.post('/hotels',
+router.post('/day',
     (req, res, next) =>
-        Hotel.create(req.body)
-            .then(hotel => res.json(hotel))
+    // console.log(req.body)
+        Day.create(req.body)
+            .then(day => res.json(day))
             .catch(next))
+
 module.exports = router;
