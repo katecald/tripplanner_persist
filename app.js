@@ -32,7 +32,7 @@ app.use(function(err, req, res, next) {
 	res.send(err, err.stack)
 })
 
-db.sync({force: false})
+db.sync({force: true})
 	.then(function(){
 		console.log('db synced');
 		app.listen(3000, function(){

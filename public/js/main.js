@@ -102,12 +102,22 @@ $(function initializeMap () {
 
           // Make a li out of this item
           const li = $(`<li>${item.name} <button class='del'>x</button></li>`)[0]
-
+          var currentDay = $('span.day-head').text().slice(-1)
           // Draw a marker on the map and attach the marker to the li
           li.marker = drawMarker(type, item.place.location)
 
           // Add this item to our itinerary for the current day
           $('.current.day').append(li)
+          console.log(item)
+          $.post('api/addHotel', 
+            {
+              dayNum: currentDay,
+              hotelId: item.id,
+            })
+            .then(function(data) {
+              console.log('updated with ' + data)
+            })
+         
         })
   )
 
@@ -129,14 +139,12 @@ $(function initializeMap () {
 
       // Add a new day
       $(evt.target).before(
-        $(`<ol class="current day"><h3><span class=day-head></span><button class=delDay>x</button></h3></ol>`)
+        $(`<ol class="current day"><h3><span class=day-head></span><button class='delDay btn-primary btn-circle pull-right'>x</button></h3></ol>`)
       )
 
       //Post a new day using the api route to the db
       $.post('/api/day', {
         number: dayNumber
-      }, function(data, status) {
-        console.log("Data: " + data + "Status: " + status);
       })
 
       numberDays()
@@ -146,7 +154,7 @@ $(function initializeMap () {
 
   function numberDays() {
     $('.day').each((index, day) => {
-      $(day).find('.day-head').text(`day ${index + 1}`)
+      $(day).find('.day-head').text(`Day ${index + 1}`)
     })
   }
 

@@ -20,15 +20,3 @@ select {
 #map-canvas {
   height: calc(100vh - 50px);
   width: 100%; }
-
-.day li {
-  display: none;
-}
-
-.day.current {
-  color: fuchsia;
-}
-
-.day.current li {
-  display: list-item;
-}

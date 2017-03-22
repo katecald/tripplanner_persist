@@ -40,7 +40,16 @@ router.get('/', (req, res, next) =>
 // Use jQuery's $.post:
 //
 //   $.post('//echo', {hello: 'world'}).then(doSomethingWithIt)
-router.post('/echo', (req, res) => res.json(req.body))
+
+router.post('/addHotel', (req, res, next) => {
+    var day = Day.findOne({where:{number: req.body.dayNum}})
+    var hotel = Hotel.findById(req.body.hotelId)
+    Promise.all([day, hotel])
+    .spread(function(day, hotel) {
+        day.setHotel(hotel)
+    }).catch(next)
+})
+
 
 router.post('/day',
     (req, res, next) =>
