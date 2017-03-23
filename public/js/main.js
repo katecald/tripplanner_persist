@@ -88,7 +88,14 @@ $(function initializeMap () {
   //START fetch day info from db if it exits and render it
   $('#itinerary').each(
        (_index, thing) => {
-          db.then(db => db.days.forEach((day) => $('#itinerary').append(`<ol class="current day"><h3><span class=day-head >Day ${day.number}</span><button class='delDay btn-primary btn-circle pull-right'>x</button></h3></ol>`)))})
+          db.then(db => db.days.forEach((day) => $('#itinerary').append(`<ol class="day"><h3><span class=day-head >Day ${day.number}</span><button class='delDay btn-primary btn-circle pull-right'>x</button></h3></ol>`)))})
+  
+  // $('ol.day').each(function(_ind, dayTitle) {
+    
+  //   $(dayTitle).append()
+  // })
+  
+  //Populate days from the db with all of their itinerary events
 
 
 
@@ -117,35 +124,45 @@ $(function initializeMap () {
           console.log(type);
           // Add this item to our itinerary for the current day
           $('.current.day').append(li)
+          
+          $.post('api/addHotel',
+            {
+              dayNum: currentDay,
+              hotelId: item.id
+            })
+            .then(function(data) {
+              console.log('updated with ' + data)
+            })
+          
           // console.log(item)
-          if (type === 'hotels') {
-            $.post('api/addHotel',
-            {
-              dayNum: currentDay,
-              hotelId: item.id,
-            })
-            .then(function(data) {
-              console.log('updated with ' + data)
-            })
-          } else if (type === 'restaurants') {
-            $.post('api/addRestaurant',
-            {
-              dayNum: currentDay,
-              restaurantId: item.id,
-            })
-            .then(function(data) {
-              console.log('updated with ' + data)
-            })
-          } else if (type === 'activities') {
-            $.post('api/addActivity',
-            {
-              dayNum: currentDay,
-              activityId: item.id,
-            })
-            .then(function(data) {
-              console.log('updated with ' + data)
-            })
-          }
+          // if (type === 'hotels') {
+          //   $.post('api/addHotel',
+          //   {
+          //     dayNum: currentDay,
+          //     hotelId: item.id,
+          //   })
+          //   .then(function(data) {
+          //     console.log('updated with ' + data)
+          //   })
+          // } else if (type === 'restaurants') {
+          //   $.post('api/addRestaurant',
+          //   {
+          //     dayNum: currentDay,
+          //     restaurantId: item.id,
+          //   })
+          //   .then(function(data) {
+          //     console.log('updated with ' + data)
+          //   })
+          // } else if (type === 'activities') {
+          //   $.post('api/addActivity',
+          //   {
+          //     dayNum: currentDay,
+          //     activityId: item.id,
+          //   })
+          //   .then(function(data) {
+          //     console.log('updated with ' + data)
+          //   })
+          // }
 
 
         })
@@ -160,7 +177,7 @@ $(function initializeMap () {
   )
 
   // 4. Deal with adding days
-  var dayNumber = 2;
+  var dayNumber = 1;
   $('button.addDay').click(
     evt => {
       //a variable to give a new day a number in the db
@@ -169,7 +186,7 @@ $(function initializeMap () {
 
       // Add a new day
       $(evt.target).before(
-        $(`<ol class="current day"><h3><span class=day-head></span><button class='delDay btn-primary btn-circle pull-right'>x</button></h3></ol>`)
+        $(`<ol class="current day"><h3><span class=day-head>Day ${dayNumber}</span><button class='delDay btn-primary btn-circle pull-right'>x</button></h3></ol>`)
       )
 
       //Post a new day using the api route to the db
@@ -177,25 +194,44 @@ $(function initializeMap () {
         number: dayNumber
       })
 
-      numberDays()
+      // numberDays()
       dayNumber++;
     }
   )
 
-  function numberDays() {
-    $('.day').each((index, day) => {
-      $(day).find('.day-head').text(`Day ${index + 1}`)
-    })
-  }
+  // function numberDays() {
+  //   $('.day').each((index, day) => {
+  //     $(day).find('.day-head').text(`Day ${index + 1}`)
+  //   })
+  // }
 
   // 5. Deal with switching days
   $(document).on('click', '.day-head',
     evt => {
+      var dayNum = $(evt.target).text().slice(-1)
+      console.log(dayNum)
+      
+
+      //console.log(dayEvents)
       $('.day.current').removeClass('current')
       const $day = $(evt.target).closest('.day')
 
       $('li').each((_i, li) => li.marker && li.marker.setMap(null))
+      
+      //new current day
       $day.addClass('current')
+
+      var dayEvents = $.get(`/api/day/${dayNum}`)
+        .then(function(eventArr) { 
+            eventArr.forEach(function(elem, ind) {
+              if (Array.isArray(elem)) elem.forEach(function(elem, ind) {
+                  $day.append(`<li>${elem.name} <button class='del'>x</button></li>`)
+              })
+              else $day.append(`<li>${elem.name} <button class='del'>x</button></li>`)
+            })
+        }).catch(console.error)
+      
+      
       $day.find('li').each((_i, li) => li.marker.setMap(currentMap))
     }
   )
