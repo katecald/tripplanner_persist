@@ -64,7 +64,7 @@ $(function initializeMap () {
     marker.setMap(currentMap);
     return marker
   }
-
+//START OF jQUERY/ AJAX WORK
   // 0. Fetch the database, parsed from json to a js object
   const db = fetch('/api').then(r => r.json())
 
@@ -105,11 +105,12 @@ $(function initializeMap () {
           var currentDay = $('span.day-head').text().slice(-1)
           // Draw a marker on the map and attach the marker to the li
           li.marker = drawMarker(type, item.place.location)
-
+          console.log(type);
           // Add this item to our itinerary for the current day
           $('.current.day').append(li)
-          console.log(item)
-          $.post('api/addHotel', 
+          // console.log(item)
+          if (type === 'hotels') {
+            $.post('api/addHotel',
             {
               dayNum: currentDay,
               hotelId: item.id,
@@ -117,7 +118,27 @@ $(function initializeMap () {
             .then(function(data) {
               console.log('updated with ' + data)
             })
-         
+          } else if (type === 'restaurants') {
+            $.post('api/addRestaurant',
+            {
+              dayNum: currentDay,
+              restaurantId: item.id,
+            })
+            .then(function(data) {
+              console.log('updated with ' + data)
+            })
+          } else if (type === 'activities') {
+            $.post('api/addActivity',
+            {
+              dayNum: currentDay,
+              activityId: item.id,
+            })
+            .then(function(data) {
+              console.log('updated with ' + data)
+            })
+          }
+
+
         })
   )
 
@@ -188,4 +209,6 @@ $(function initializeMap () {
 
   // When we start, add a day
   $('button.addDay').click()
+
+  //START OF jQUERY/ AJAX WORK
 });

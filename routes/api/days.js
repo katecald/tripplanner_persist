@@ -50,6 +50,23 @@ router.post('/addHotel', (req, res, next) => {
     }).catch(next)
 })
 
+router.post('/addRestaurant', (req, res, next) => {
+    var day = Day.findOne({where:{number: req.body.dayNum}})
+    var restaurant = Restaurant.findById(req.body.restaurantId)
+    Promise.all([day, restaurant])
+    .spread(function(day, restaurant) {
+        day.addRestaurant(restaurant)
+    }).catch(next)
+})
+
+router.post('/addActivity', (req, res, next) => {
+    var day = Day.findOne({where:{number: req.body.dayNum}})
+    var activity = Activity.findById(req.body.activityId)
+    Promise.all([day, activity])
+    .spread(function(day, activity) {
+        day.addActivity(activity)
+    }).catch(next)
+})
 
 router.post('/day',
     (req, res, next) =>
