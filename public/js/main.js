@@ -85,6 +85,15 @@ $(function initializeMap () {
       )
     })
 
+  //START fetch day info from db if it exits and render it
+  $('#itinerary').each(
+       (_index, thing) => {
+          db.then(db => db.days.forEach((day) => $('#itinerary').append(`<ol class="current day"><h3><span class=day-head >Day ${day.number}</span><button class='delDay btn-primary btn-circle pull-right'>x</button></h3></ol>`)))})
+
+
+
+  //END fetch day info from db if it exits and render it
+
   // 2. Wire up the add buttons
   // We could do this if we wanted to select by the add
   // dataset item instead:
@@ -208,7 +217,7 @@ $(function initializeMap () {
     })
 
   // When we start, add a day
-  $('button.addDay').click()
+  // $('button.addDay').click()
 
   //START OF jQUERY/ AJAX WORK
 });

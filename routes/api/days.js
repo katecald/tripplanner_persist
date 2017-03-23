@@ -27,9 +27,11 @@ router.get('/', (req, res, next) =>
     Promise.props({
         hotels: Hotel.findAll({ include: [Place] }),
         restaurants: Restaurant.findAll({ include: [Place] }),
-        activities: Activity.findAll({ include: [Place] })
+        activities: Activity.findAll({ include: [Place] }),
+        days: Day.findAll()
     })
         .then(data => res.json(data))
+
         .catch(next)
 )
 
